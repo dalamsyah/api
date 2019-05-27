@@ -15,8 +15,12 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/master/lapangan', 'MasterController@getLapangan');
+//$router->get('/master/lapangan', 'MasterController@getLapangan');
 
-$router->get('/master/lapangan/', 'MasterController@getLapangan');
+//$router->get('/master/lapangan/', 'MasterController@getLapangan');
+
+$router->post('/transaksi/', 'TransactionController@index');
+$router->get('/transaksi/', 'TransactionController@get');
+$router->get('/transaksi/orderid', 'TransactionController@getOrderId');
 
 //$router->get('/master/{id}', 'MasterController@show');
