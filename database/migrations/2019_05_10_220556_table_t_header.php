@@ -15,11 +15,15 @@ class TableTHeader extends Migration
     {
         Schema::create('t_header', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('username',200);
-            $table->string('nama_tim',200);
-            $table->string('nama_lapangan',200);
-            $table->string('kode_lapangan',200);
-            $table->double('harga_lapangan');
+			$table->string('tanggal',30);
+			$table->string('order_no',50);
+            $table->string('username',100);
+            $table->string('kode_tim',100);
+            $table->string('kode_lapangan',50);
+            $table->string('nama_lapangan',100);
+			$table->double('harga_lapangan');
+            $table->double('total_harga'); //total_harga = total_jam * harga_lapangan
+			$table->integer('total_jam');
             $table->timestamps();
         });
     }

@@ -19,3 +19,10 @@ If you discover a security vulnerability within Lumen, please send an e-mail to 
 ## License
 
 The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Referensi
+
+https://medium.com/@rohmanhakim/mengulik-reactive-programming-di-android-bagian-1-916b111c5597
+https://github.com/rohmanhakim/RxJava-Android-Samples
+
+https://medium.com/@budioktaviyans/android-reactive-programming-part-1-2619bda7b5b4

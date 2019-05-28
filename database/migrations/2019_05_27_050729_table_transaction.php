@@ -15,11 +15,17 @@ class TableTransaction extends Migration
     {
         Schema::create('transaksi', function (Blueprint $table) {
             $table->bigIncrements('id');
-			$table->string('tanggal',50);
-			$table->string('lapanganId',200);
-			$table->string('jam',20);
-			$table->string('userId',50);
-			$table->string('teamId',50);
+			$table->string('tanggal',30);
+			$table->string('order_no',50);
+            $table->string('username',100);
+            $table->string('kode_tim',100);
+            $table->string('kode_lapangan',50);
+            $table->string('nama_lapangan',100);
+			$table->double('harga_lapangan');
+            $table->string('jam_mulai',20);
+			$table->string('jam_selesai',20);
+			$table->integer('total_jam');
+            $table->double('total_harga'); //total_harga = total_jam * harga_lapangan
             $table->timestamps();
         });
     }

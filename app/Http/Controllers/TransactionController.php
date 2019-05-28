@@ -18,7 +18,11 @@ class TransactionController extends Controller
         //
     }
 
-    public function index(Request $request){
+    public function index2(Request $request){
+		
+		app('db')->transaction(function() {
+			// DB work
+		});
 		
 		//$results = app('db')->select("SELECT * FROM transaksi");
 		
@@ -33,6 +37,30 @@ class TransactionController extends Controller
 		return response('Berhasil Tambah Data');
 		
     }
+	
+	public function index(Request $request){
+		
+		$data = new Transaksi();
+		$data->tanggal = $request->input('tanggal');
+		$data->order_no = $request->input('order_no');
+		$data->username = $request->input('username');
+		$data->kode_tim = $request->input('kode_tim');
+		$data->kode_lapangan = $request->input('kode_lapangan');
+		$data->nama_lapangan = $request->input('nama_lapangan');
+		$data->harga_lapangan = $request->input('harga_lapangan');
+		$data->total_harga = $request->input('total_harga');
+		$data->total_jam = $request->input('total_jam');
+		$data->jam_mulai = $request->input('jam_mulai');
+		$data->jam_selesai = $request->input('jam_selesai');
+		$data->save();
+		
+		$t = array();
+		
+		return response()->json(array('message' => 'success', 'total' => count($t), 'result' => $t), 200);
+		
+		//return $this->res("success"); //response('Berhasil Tambah Data');
+		
+	}
 	
 	public function get(){
 		//$response = App\Transaksi::all();
@@ -56,7 +84,7 @@ class TransactionController extends Controller
 		return response()->json(array('status' => app('Illuminate\Http\Response')->status(), 'message' => 'success', 'total' => count($t), 'result' => $t), 200);
 	}
 	
-	public function getOrderId()
+	public function getOrderId($jam, $tgl)
 {
 		//SN-080919-0809; senin
 		//SL-080919-0810; selasa
@@ -66,56 +94,50 @@ class TransactionController extends Controller
 		//SB
 		//MG
 		
-		// Get the last created order 
-		/* $lastOrder = app('db')->select("SELECT created_at FROM transaksi order by created_at desc limit 1");
-
-		if ( ! $lastOrder )
-
-			$number = 0;
-		else 
-			$number = substr($lastOrder[0]->created_at, 3); */
+		$jam = "0810";
 		
-		$tglFormat = "27-05-2019";
-
-		$day = Carbon::createFromFormat('d-m-Y', $tglFormat)->dayOfWeek;
-		$t = Carbon::createFromFormat('d-m-Y', $tglFormat)->day;
-		$bln = Carbon::createFromFormat('d-m-Y', $tglFormat)->month;
-		$thn = Carbon::createFromFormat('d-m-Y', $tglFormat)->year;
+		$dt = Carbon::parse('2019-05-27');
 		
-		$tgl = $t.$bln.$thn;
+		$day = $dt->isoFormat('d');
+		
+		$t = $dt->isoFormat('MM');
+		$b = $dt->isoFormat('DD');
+		$y = $dt->isoFormat('YY');
+		
+		$tgl = $t.$b.$y;
 		
 		$orderId = "";
 		
 		switch($day){
 			case 1:
-				$orderId = "SN-".$tgl;
+				$orderId = "SN-".$tgl."-".$jam;
 			break;
 			case 2:
-				$orderId = "SL".$tgl;
+				$orderId = "SL".$tgl."-".$jam;
 			break;
 			case 3:
-				$orderId = "RB".$tgl;
+				$orderId = "RB".$tgl."-".$jam;
 			break;
 			case 4:
-				$orderId = "KM".$tgl;
+				$orderId = "KM".$tgl."-".$jam;
 			break;
 			case 5:
-				$orderId = "JM".$tgl;
+				$orderId = "JM".$tgl."-".$jam;
 			break;
 			case 6:
-				$orderId = "SB".$tgl;
+				$orderId = "SB".$tgl."-".$jam;
 			break;
-			case 7:
-				$orderId = "MG".$tgl;
+			case 0:
+				$orderId = "MG".$tgl."-".$jam;
 			break;
 		}
 		
 		return $orderId; //'ORD' . sprintf('%06d', intval($number) + 1);
 	}
 	
-	protected function respond($status, $data = [])
+	public function res($msg, $data = [])
     {
-    	return response()->json($data, $this->statusCodes[$status]);
+    	return response()->json($data, $msg, app('Illuminate\Http\Response')->status());
     }
 	
 }
