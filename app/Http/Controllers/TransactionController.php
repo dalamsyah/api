@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 use App\Transaksi;
 use App\PreTransaksi;
+
+use App\THeader;
+use App\TDetail;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -39,7 +43,71 @@ class TransactionController extends Controller
 		
     }
 	
+	public function t_header(Request $request){
+		
+		$orderno = $this->hashOrder();
+		$jamArr = explode(",", $request->input('jam_main'));
+		
+		$data = new THeader();
+		$data->tanggal = $request->input('tanggal');
+		$data->order_no = $orderno;
+		$data->username = $request->input('username');
+		$data->kode_tim = $request->input('kode_tim');
+		$data->kode_lapangan = $request->input('kode_lapangan');
+		$data->nama_lapangan = $request->input('nama_lapangan');
+		$data->harga_lapangan = $request->input('harga_lapangan');
+		$data->total_harga = $request->input('total_harga');
+		$data->total_jam = count($jamArr);
+		$data->status = $request->input('status');
+		
+		
+		for( $i = 0; $i < count($jamArr); $i++){
+			
+			$det = new TDetail();
+			$det->order_no = $orderno;
+			$det->jam_main = $jamArr[$i];
+			$det->harga = $request->input('harga_lapangan');
+			$det->save();
+			
+		}
+		
+		$data->save();
+		
+		$t = array();
+		return response()->json(array('message' => 'success', 'total' => count($t), 'result' => $t), 200);
+		
+	}
+	
 	public function pre_transaction(Request $request){
+		
+		$orderid = $this->getOrderId($request->input('jam_mulai'), $request->input('jam_selesai'), $request->input('tanggal'));
+		
+		$data = new PreTransaksi();
+		$data->tanggal = $request->input('tanggal'); //08-05-2019
+		$data->order_no = $orderid;
+		$data->username = $request->input('username');
+		$data->kode_tim = $request->input('kode_tim');
+		$data->kode_lapangan = $request->input('kode_lapangan');
+		$data->nama_lapangan = $request->input('nama_lapangan');
+		$data->harga_lapangan = $request->input('harga_lapangan');
+		$data->jam_main = $request->input('jam_main');
+		$data->total_jam = $total_jam;
+		$data->total_harga = $total_jam * $request->input('harga_lapangan');
+		$data->status = 'waiting';
+		
+		$t = array();
+		
+		if($this->pre_check($orderid) < 1 ){
+			$data->save();
+			
+			return response()->json(array('message' => 'success', 'total' => count($t), 'result' => $t), 200);
+		}else{
+			return response()->json(array('message' => 'already exist order id '.$orderid, 'total' => count($t), 'result' => $t), 200);
+		}
+		
+	}
+	
+	public function pre_transaction2(Request $request){
 		
 		$jam1 = explode(":", $request->input('jam_mulai'));
 		$jam2 = explode(":", $request->input('jam_selesai'));
@@ -95,6 +163,10 @@ class TransactionController extends Controller
 		}
 		
 		return response()->json(array('status' => app('Illuminate\Http\Response')->status(), 'message' => 'success', 'total' => count($t), 'result' => $t), 200);
+	}
+	
+	public function getHasOrder(){
+		return $this->hashOrder();
 	}
 	
 	public function pre_check($orderno){
@@ -156,6 +228,37 @@ class TransactionController extends Controller
 		
 	}
 	
+	public function hashOrder2($len = 5){
+	  $charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	  $base = strlen($charset);
+	  $result = '';
+
+	  $now = explode(' ', microtime())[1];
+	  while ($now >= $base){
+		$i = $now % $base;
+		$result = $charset[$i] . $result;
+		$now /= $base;
+	  }
+	  return substr($result, -5);
+	}
+	
+	public function hashOrder(){
+		
+		//SN-dWcz0C-
+		
+		//$len=5; $abc="aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
+		
+		//$letters = str_split($abc);
+		//$str = "";
+		//for ($i=0; $i<=$len; $i++) {
+			//$str .= $letters[rand(0, count($letters)-1)];
+		//};
+		
+		//return $str;
+		
+		return substr(sha1(mt_rand() . microtime()), mt_rand(0,35), 5);
+	}
+	
 	public function getOrderId($jam_mulai, $jam_selesai, $tgl){
 		//SN-080919-0809; senin
 		//SL-080919-0810; selasa
@@ -209,5 +312,11 @@ class TransactionController extends Controller
 		return $orderId; //'ORD' . sprintf('%06d', intval($number) + 1);
 	}
 	
+	public function getMember($hari){
+		
+		$t = app('db')->select("SELECT * from member where hari = '".$hari."'");
+		
+		return response()->json(array('message' => 'success', 'total' => count($t), 'result' => $t), 200);
+	}
 	
 }

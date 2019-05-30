@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class TableTHeader extends Migration
+class TableMember extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,15 @@ class TableTHeader extends Migration
      */
     public function up()
     {
-        Schema::create('t_header', function (Blueprint $table) {
+        Schema::create('member', function (Blueprint $table) {
             $table->bigIncrements('id');
-			$table->string('tanggal',30);
-			$table->string('order_no',50);
-            $table->string('username',100);
-            $table->string('kode_tim',100);
+			$table->string('kode_tim',100);
             $table->string('kode_lapangan',50);
             $table->string('nama_lapangan',100);
 			$table->double('harga_lapangan');
-            $table->double('total_harga'); //total_harga = total_jam * harga_lapangan
-			$table->integer('total_jam');
-			$table->string('status',20); //wait
+            $table->string('jam_main',20);
+			$table->string('hari',20);
+			$table->string('status',20);
             $table->timestamps();
         });
     }
@@ -36,6 +33,6 @@ class TableTHeader extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('t_header');
+        Schema::dropIfExists('member');
     }
 }

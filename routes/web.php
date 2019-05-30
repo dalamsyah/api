@@ -20,10 +20,13 @@ $router->get('/', function () use ($router) {
 //$router->get('/master/lapangan/', 'MasterController@getLapangan');
 
 //$router->post('/transaksi/', 'TransactionController@index');
-$router->post('/transaksi/', 'TransactionController@pre_transaction');
+$router->post('/transaksi/', 'TransactionController@t_header');
 $router->post('/transaksi/update', 'TransactionController@pre_update');
 $router->get('/transaksi/', 'TransactionController@get');
+$router->get('/transaksi/hash', 'TransactionController@getHasOrder');
 $router->get('/transaksi/orderid', 'TransactionController@getOrderId');
 $router->get('/transaksi/check', 'TransactionController@checkBooking');
+
+$router->get('/member/{hari}', 'TransactionController@getMember');
 
 //$router->get('/master/{id}', 'MasterController@show');

@@ -16,8 +16,8 @@ class TableTDetail extends Migration
         Schema::create('t_detail', function (Blueprint $table) {
             $table->bigIncrements('id');
 			$table->string('order_no',200);
-            $table->string('jam_mulai',20);
-			$table->string('jam_selesai',20);
+            $table->string('jam_main',20);
+			$table->double('harga');
             $table->timestamps();
         });
     }
